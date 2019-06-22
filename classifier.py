@@ -7,6 +7,15 @@ from sklearn.model_selection import train_test_split
 import GlobalVariables
 
 
+def divide_set_into_num_of_pieces(classes, num_of_pieces):
+    all_data = trim_and_label_data(classes)
+    [np.random.shuffle(data) for data in all_data]
+    pieces = np.array_split(all_data, num_of_pieces, 1)
+    labels = [x[0][:] for x in pieces]
+    pieces = [x[1:][:] for x in pieces]
+    return pieces, labels
+
+
 def divide_set(classes, training_part_procentage):
     all_data = trim_and_label_data(classes)
     X_train, X_test, y_train, y_test = train_test_split(all_data[1:].T, all_data[:1].T,
@@ -24,8 +33,8 @@ def trim_and_label_data(classes):
     return all_data[chosen_rows]  # all_data[[x+1 for x in GlobalVariables.CHOSEN_FEATURES].append(0)]
 
 
-def classify_with_NN(classees, training_part_procentage):
-    X_train, X_test, y_train, y_test = divide_set(classees, training_part_procentage)
+def classify_with_NN(X_train, X_test, y_train, y_test):
+    # X_train, X_test, y_train, y_test = divide_set(classees, training_part_procentage)
     correct_matches = 0
 
     for i in range(0, len(X_test)):
@@ -42,8 +51,7 @@ def classify_with_NN(classees, training_part_procentage):
     return correct_matches / len(X_test) * 100
 
 
-def classify_with_kNN(classees, training_part_procentage, k):
-    X_train, X_test, y_train, y_test = divide_set(classees, training_part_procentage)
+def classify_with_kNN(X_train, X_test, y_train, y_test, k):
     correct_matches = 0
 
     for i in range(0, len(X_test)):
@@ -60,8 +68,7 @@ def classify_with_kNN(classees, training_part_procentage, k):
     return correct_matches / len(X_test) * 100
 
 
-def classify_with_NM(classees, training_part_procentage):
-    X_train, X_test, y_train, y_test = divide_set(classees, training_part_procentage)
+def classify_with_NM(X_train, X_test, y_train, y_test):
     correct_matches = 0
 
     classA = np.array([X_train[i] for i in range(0, len(X_train)) if y_train[i] == 0])
@@ -77,5 +84,3 @@ def classify_with_NM(classees, training_part_procentage):
             correct_matches += 1
 
     return correct_matches / len(X_test) * 100
-
-

@@ -7,9 +7,11 @@ import GlobalVariables
 import classifier
 
 import fisher
+from classification_assessment import run_crossvalidation
 
 TRAIN_SET_RATIO = 0.2
 NUM_OF_FEATURES_TO_CHOOSE = 3
+NUM_OF_CROSSVALIDATION_ITERATIONS = 10
 
 classes, classes_names, num_of_traits = Database.getClassesWithNamesAndNumOfTraits()
 GlobalVariables.NUM_OF_ALL_FEATURES = num_of_traits
@@ -25,16 +27,11 @@ GlobalVariables.CHOSEN_FEATURES = fisher.run_fisher_with_sfs(classes, NUM_OF_FEA
 # [30, 15, 7]
 print(GlobalVariables.CHOSEN_FEATURES)
 
-# print("NN:", classifier.classify_with_NN(classes, TRAIN_SET_RATIO), "%")
-print("kNN:", classifier.classify_with_kNN(classes, TRAIN_SET_RATIO, 3), "%")
-# print("NM:", classifier.classify_with_NM(classes, TRAIN_SET_RATIO), "%")
-# 85.35031847133759
+X_train, X_test, y_train, y_test = classifier.divide_set(classes, TRAIN_SET_RATIO)
+
+# print("NN:", classifier.classify_with_NN(X_train, X_test, y_train, y_test), "%")
+# print("kNN:", classifier.classify_with_kNN(X_train, X_test, y_train, y_test, 3), "%")
+print("NM:", classifier.classify_with_NM(X_train, X_test, y_train, y_test), "%")
 
 
-
-
-# all_data = classifier.label_data(classes)
-# classifier.divide_set(all_data, 0.3)
-
-# Features: [15, 31, 33]
-# Features: [30, 15, 33]
+run_crossvalidation(classes, NUM_OF_CROSSVALIDATION_ITERATIONS, "NM", classifier.classify_with_NM)
